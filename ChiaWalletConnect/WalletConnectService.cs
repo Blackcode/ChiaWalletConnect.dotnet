@@ -39,8 +39,10 @@ namespace ChiaWalletConnect.dotnet
                     { "chia",
                         new RequiredNamespace() {
                             Methods = new[] {
+                                "chia_logIn",
                                 "chia_getWallets",
-                                "chia_getTransaction"
+                                "chia_getTransaction",
+                                "chia_getWalletBalance"
                             },
                             Chains = new[] {
                                 "chia:mainnet"
@@ -57,19 +59,47 @@ namespace ChiaWalletConnect.dotnet
 
             return sessionData.Topic;
         }
-
-        public async Task<dynamic> GetWallets(string walletfingerprint, string topic)
+        /// <summary>Log In</summary>
+        /// <param name="fingerprint">Fingerprint</param>
+        /// <param name="topic">Client Topic</param>
+        /// <returns>A Json object</returns>
+        public async Task<dynamic> LogIn(string fingerprint, string topic)
         {
-            var data = new GetWalletsRequest(walletfingerprint, false);
+            var data = new LogInRequest(fingerprint);
+            dynamic response = await client.Request<LogInRequest, dynamic>(topic, data);
+
+            return response;
+        }
+
+        /// <summary>Get wallets</summary>
+        /// <param name="fingerprint">Fingerprint</param>
+        /// <param name="topic">Client Topic</param>
+        /// <returns>A Json object</returns>
+        public async Task<dynamic> GetWallets(string fingerprint, string topic)
+        {
+            var data = new GetWalletsRequest(fingerprint, false);
             dynamic response = await client.Request<GetWalletsRequest, dynamic>(topic, data);
 
             return response;
         }
 
-        public async Task<dynamic> GetTransaction(string walletfingerprint, string transaction_id, string topic)
+        /// <summary></summary>
+        /// <param name="fingerprint">Fingerprint</param>
+        /// <param name="topic">Client Topic</param>
+        /// <param name="transactionId">The transaction id</param>
+        /// <returns></returns>
+        public async Task<dynamic> GetTransaction(string fingerprint, string topic, string transactionId)
         {
-            var data = new GetTransactionRequest(walletfingerprint, transaction_id);
+            var data = new GetTransactionRequest(fingerprint, transactionId);
             dynamic response = await client.Request<GetTransactionRequest, dynamic>(topic, data);
+
+            return response;
+        }
+
+        public async Task<dynamic> GetWalletBalance(string fingerprint, string topic, int walletId = 1)
+        {
+            var data = new GetWalletBalance(fingerprint, walletId);
+            dynamic response = await client.Request<GetWalletBalance, dynamic>(topic, data);
 
             return response;
         }

@@ -7,6 +7,16 @@ using WalletConnectSharp.Network.Models;
 
 namespace Methods
 {
+    [RpcMethod("chia_logIn")]
+    public class LogInRequest
+    {
+        public string fingerprint { get; set; }
+        public LogInRequest(string fingerprint)
+        {
+            this.fingerprint = fingerprint;
+        }
+    }
+
     [RpcMethod("chia_getWallets")]
     public class GetWalletsRequest
     {
@@ -24,10 +34,22 @@ namespace Methods
     {
         public string fingerprint { get; set; }
         public string transactionId { get; set; }
-        public GetTransactionRequest(string fingerprint, string transaction_id)
+        public GetTransactionRequest(string fingerprint, string transactionId)
         {
             this.fingerprint = fingerprint;
-            transactionId = transaction_id;
+            this.transactionId = transactionId;
+        }
+    }
+
+    [RpcMethod("chia_getWalletBalance")]
+    public class GetWalletBalance
+    {
+        public string fingerprint { get; set; }
+        public int walletId { get; set; }
+        public GetWalletBalance(string fingerprint, int walletId)
+        {
+            this.fingerprint = fingerprint;
+            this.walletId = walletId;
         }
     }
 }

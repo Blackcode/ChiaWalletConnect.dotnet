@@ -9,7 +9,7 @@ namespace ChiaWalletConnect.dotnet
         static async Task Main(string[] args)
         {
             //chia wallet id
-            string walletId = "1921498453";
+            string fingerprint = "1921498453";
             //create a project id at https://cloud.walletconnect.com/app
             string projectId = "a97dbb2756d03b9160843f6ec3ecb989";
             //dApp metadata
@@ -36,15 +36,26 @@ namespace ChiaWalletConnect.dotnet
             //TODO: add more commands https://github.com/Chia-Network/chia-blockchain-gui/blob/main/packages/gui/src/constants/WalletConnectCommands.tsx
 
             //chia_getWallets
+            /*Console.WriteLine("Accept confirmation request in Chia Application");
+            var login = await walletConnectService.LogIn(fingerprint, topic);
+            Console.WriteLine(login);
+
+            //chia_getWallets
             Console.WriteLine("Accept confirmation request in Chia Application");
-            var wallets = await walletConnectService.GetWallets(walletId, topic);
+            var wallets = await walletConnectService.GetWallets(fingerprint, topic);
             Console.WriteLine(wallets);
 
             //chia_getTransaction
-            /*Console.WriteLine("Accept confirmation request in Chia Application");
-            string transaction_id = "7d61d94db2ed2f210d27cc486c33bf642c72a448af8f0e00de84bef9213fd598";
-            var transaction = await walletConnectService.GetTransaction(walletId, transaction_id, topic);
+            Console.WriteLine("Accept confirmation request in Chia Application");
+            string transactionId = "7d61d94db2ed2f210d27cc486c33bf642c72a448af8f0e00de84bef9213fd598";
+            var transaction = await walletConnectService.GetTransaction(fingerprint, topic, transaction_id);
             Console.WriteLine(transaction);*/
+
+            //chia_getWalletBalance
+            Console.WriteLine("Accept confirmation request in Chia Application");
+            int walletId = 1;
+            var walletbalance = await walletConnectService.GetWalletBalance(fingerprint, topic, walletId);
+            Console.WriteLine(walletbalance);
         }
     }
 }
