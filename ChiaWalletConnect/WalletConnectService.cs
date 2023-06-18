@@ -74,7 +74,7 @@ namespace ChiaWalletConnect.dotnet
                                 "chia_setDIDName",
                                 "chia_setNFTDID",
                                 "chia_getNFTWalletsWithDIDs",
-                                /*"chia_getVCList",
+                                "chia_getVCList",
                                 "chia_getVC",
                                 "chia_spendVC",
                                 "chia_addVCProofs",
