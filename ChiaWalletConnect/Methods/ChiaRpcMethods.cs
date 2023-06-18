@@ -52,4 +52,16 @@ namespace Methods
             this.walletId = walletId;
         }
     }
+
+    [RpcMethod("chia_getCurrentAddress")]
+    public class GetCurrentAddress
+    {
+        public string fingerprint { get; set; }
+        public int walletId { get; set; }
+        public GetCurrentAddress(string fingerprint, int walletId)
+        {
+            this.fingerprint = fingerprint;
+            this.walletId = walletId;
+        }
+    }
 }

@@ -35,8 +35,8 @@ namespace ChiaWalletConnect.dotnet
 
             //TODO: add more commands https://github.com/Chia-Network/chia-blockchain-gui/blob/main/packages/gui/src/constants/WalletConnectCommands.tsx
 
-            //chia_getWallets
-            /*Console.WriteLine("Accept confirmation request in Chia Application");
+            /*//chia_getWallets
+            Console.WriteLine("Accept confirmation request in Chia Application");
             var login = await walletConnectService.LogIn(fingerprint, topic);
             Console.WriteLine(login);
 
@@ -48,13 +48,19 @@ namespace ChiaWalletConnect.dotnet
             //chia_getTransaction
             Console.WriteLine("Accept confirmation request in Chia Application");
             string transactionId = "7d61d94db2ed2f210d27cc486c33bf642c72a448af8f0e00de84bef9213fd598";
-            var transaction = await walletConnectService.GetTransaction(fingerprint, topic, transaction_id);
-            Console.WriteLine(transaction);*/
+            var transaction = await walletConnectService.GetTransaction(fingerprint, topic, transactionId);
+            Console.WriteLine(transaction);
 
             //chia_getWalletBalance
             Console.WriteLine("Accept confirmation request in Chia Application");
             int walletId = 1;
             var walletbalance = await walletConnectService.GetWalletBalance(fingerprint, topic, walletId);
+            Console.WriteLine(walletbalance);*/
+
+            //chia_getCurrentAddress
+            Console.WriteLine("Accept confirmation request in Chia Application");
+            int walletId = 1;
+            var walletbalance = await walletConnectService.GetCurrentAddress(fingerprint, topic, walletId);
             Console.WriteLine(walletbalance);
         }
     }
