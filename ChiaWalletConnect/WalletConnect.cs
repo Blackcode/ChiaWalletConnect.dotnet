@@ -3,11 +3,17 @@ using WalletConnectSharp.Sign.Models;
 using WalletConnectSharp.Sign;
 using WalletConnectSharp.Core.Models.Pairing;
 using Org.BouncyCastle.Asn1.Cms;
-using Methods;
+using ChiaWalletConnect.dotnet.Endpoints;
+using ChiaWalletConnect.dotnet.ChiaTypes;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json;
+using System;
+using ChiaWalletConnect.dotnet.Utils;
 
 namespace ChiaWalletConnect.dotnet
 {
-    internal class WalletConnectService
+    internal class WalletConnect
     {
         public WalletConnectSignClient client;
 
@@ -39,12 +45,12 @@ namespace ChiaWalletConnect.dotnet
                     { "chia",
                         new RequiredNamespace() {
                             Methods = new[] {
-                                "chia_logIn",
-                                "chia_getWallets",
-                                "chia_getTransaction",
-                                "chia_getWalletBalance",
-                                /*"chia_getWalletBalances",*/
-                                "chia_getCurrentAddress",
+                                "chia_logIn",//done
+                                "chia_getWallets",//done
+                                "chia_getTransaction",//done
+                                "chia_getWalletBalance",//done
+                                /*"chia_getWalletBalances",*///1.8.2
+                                "chia_getCurrentAddress",//done
                                 "chia_sendTransaction",
                                 "chia_signMessageById",
                                 "chia_signMessageByAddress",
@@ -67,20 +73,20 @@ namespace ChiaWalletConnect.dotnet
                                 "chia_addCATToken",
                                 "chia_getNFTs",
                                 "chia_getNFTInfo",
-                                /*"chia_mintNFT",
-                                "chia_transferNFT",
-                                "chia_getNFTsCount",
-                                "chia_createNewDIDWallet",
-                                "chia_setDIDName",
-                                "chia_setNFTDID",
-                                "chia_getNFTWalletsWithDIDs",
-                                "chia_getVCList",
-                                "chia_getVC",
-                                "chia_spendVC",
-                                "chia_addVCProofs",
-                                "chia_getProofsForRoot",
-                                "chia_revokeVC",
-                                "chia_showNotification"*/
+                                /*"chia_mintNFT",//1.8.2
+                                "chia_transferNFT",//1.8.2
+                                "chia_getNFTsCount",//1.8.2
+                                "chia_createNewDIDWallet",//1.8.2
+                                "chia_setDIDName",//1.8.2
+                                "chia_setNFTDID",//1.8.2
+                                "chia_getNFTWalletsWithDIDs",//1.8.2
+                                "chia_getVCList",//1.8.2
+                                "chia_getVC",//1.8.2
+                                "chia_spendVC",//1.8.2
+                                "chia_addVCProofs",//1.8.2
+                                "chia_getProofsForRoot",//1.8.2
+                                "chia_revokeVC",//1.8.2
+                                "chia_showNotification"*///1.8.2
                             },
                             Chains = new[] {
                                 "chia:mainnet"
@@ -101,12 +107,12 @@ namespace ChiaWalletConnect.dotnet
         /// <param name="fingerprint">Fingerprint</param>
         /// <param name="topic">Topic</param>
         /// <returns>A Json object</returns>
-        public async Task<dynamic> LogIn(string fingerprint, string topic)
+        public async Task<LoginResult> LogIn(string fingerprint, string topic)
         {
-            var data = new LogInRequest(fingerprint);
-            dynamic response = await client.Request<LogInRequest, dynamic>(topic, data);
+            var data = new LogIn(fingerprint);
+            dynamic response = await client.Request<LogIn, dynamic>(topic, data);
 
-            return response;
+            return Converters.ToObject<LoginResult>(response, "data");
         }
 
         /// <summary>Requests a complete listing of the wallets associated with the current wallet key</summary>
@@ -114,12 +120,12 @@ namespace ChiaWalletConnect.dotnet
         /// <param name="topic">Topic</param>
         /// <param name="include_data">Include Wallet Metadata</param>
         /// <returns>A Json object</returns>
-        public async Task<dynamic> GetWallets(string fingerprint, string topic, bool include_data = false)
+        public async Task<IEnumerable<WalletInfo>> GetWallets(string fingerprint, string topic, bool include_data = false)
         {
-            var data = new GetWalletsRequest(fingerprint, include_data);
-            dynamic response = await client.Request<GetWalletsRequest, dynamic>(topic, data);
+            var data = new GetWallets(fingerprint, include_data);
+            dynamic response = await client.Request<GetWallets, dynamic>(topic, data);
 
-            return response;
+            return Converters.ToObject<IEnumerable<WalletInfo>>(response, "data");
         }
 
         /// <summary>Requests details for a specific transaction</summary>
@@ -127,38 +133,38 @@ namespace ChiaWalletConnect.dotnet
         /// <param name="topic">Topic</param>
         /// <param name="transactionId">Transaction Id</param>
         /// <returns>A Json object</returns>
-        public async Task<dynamic> GetTransaction(string fingerprint, string topic, string transactionId)
+        public async Task<TransactionRecord> GetTransaction(string fingerprint, string topic, string transactionId)
         {
-            var data = new GetTransactionRequest(fingerprint, transactionId);
-            dynamic response = await client.Request<GetTransactionRequest, dynamic>(topic, data);
+            var data = new GetTransaction(fingerprint, transactionId);
+            dynamic response = await client.Request<GetTransaction, dynamic>(topic, data);
 
-            return response;
+            return Converters.ToObject<TransactionRecord>(response, "data");
         }
 
         /// <summary>Requests the asset balance for a specific wallet associated with the current wallet key</summary>
         /// <param name="fingerprint">Fingerprint</param>
         /// <param name="topic">Topic</param>
         /// <param name="walletId">Wallet Id</param>
-        /// <returns></returns>
-        public async Task<dynamic> GetWalletBalance(string fingerprint, string topic, int walletId = 1)
+        /// <returns>WalletBalance</returns>
+        public async Task<WalletBalance> GetWalletBalance(string fingerprint, string topic, int walletId = 1)
         {
             var data = new GetWalletBalance(fingerprint, walletId);
             dynamic response = await client.Request<GetWalletBalance, dynamic>(topic, data);
 
-            return response;
+            return Converters.ToObject<WalletBalance>(response, "data");
         }
 
         /// <summary>>Requests the current receive address associated with the current wallet key</summary>
         /// <param name="fingerprint">Fingerprint</param>
         /// <param name="topic">Topic</param>
         /// <param name="walletId">Wallet Id</param>
-        /// <returns></returns>
-        public async Task<dynamic> GetCurrentAddress(string fingerprint, string topic, int walletId = 1)
+        /// <returns>string</returns>
+        public async Task<string> GetCurrentAddress(string fingerprint, string topic, int walletId = 1)
         {
             var data = new GetCurrentAddress(fingerprint, walletId);
             dynamic response = await client.Request<GetCurrentAddress, dynamic>(topic, data);
 
-            return response;
+            return Converters.ToObject<string>(response, "data");
         }
     }
 }

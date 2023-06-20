@@ -21,47 +21,45 @@ namespace ChiaWalletConnect.dotnet
                 Url = "https://chia.org/",
             };
 
-            WalletConnectService walletConnectService = new WalletConnectService();
-            await walletConnectService.Initialize(projectId, metadata);
+            WalletConnect walletConnect = new WalletConnect();
+            await walletConnect.Initialize(projectId, metadata);
 
             string topic;
 
-            if (walletConnectService.client.Session.Keys.Length == 0)
+            if (walletConnect.client.Session.Keys.Length == 0)
                 //if dApp is not connected create a connection. You will have the connection URI printed in the console
-                topic = await walletConnectService.Connect();
+                topic = await walletConnect.Connect();
             else
                 //if dApp is connected use the first session as example
-                topic = walletConnectService.client.Session.Values[0].Topic;
+                topic = walletConnect.client.Session.Values[0].Topic;
 
             //TODO: add more commands https://github.com/Chia-Network/chia-blockchain-gui/blob/main/packages/gui/src/constants/WalletConnectCommands.tsx
-
-            /*//chia_getWallets
-            Console.WriteLine("Accept confirmation request in Chia Application");
-            var login = await walletConnectService.LogIn(fingerprint, topic);
+            //TODO: Add Events to permit multiple commands
+            
+            //chia_logIn
+            /*Console.WriteLine("Accept confirmation request in Chia Application");
+            var login = await walletConnect.LogIn(fingerprint, topic);
             Console.WriteLine(login);
 
             //chia_getWallets
             Console.WriteLine("Accept confirmation request in Chia Application");
-            var wallets = await walletConnectService.GetWallets(fingerprint, topic);
+            var wallets = await walletConnect.GetWallets(fingerprint, topic);
             Console.WriteLine(wallets);
 
             //chia_getTransaction
             Console.WriteLine("Accept confirmation request in Chia Application");
-            string transactionId = "7d61d94db2ed2f210d27cc486c33bf642c72a448af8f0e00de84bef9213fd598";
-            var transaction = await walletConnectService.GetTransaction(fingerprint, topic, transactionId);
+            var transaction = await walletConnect.GetTransaction(fingerprint, topic, "7d61d94db2ed2f210d27cc486c33bf642c72a448af8f0e00de84bef9213fd598");
             Console.WriteLine(transaction);
 
             //chia_getWalletBalance
             Console.WriteLine("Accept confirmation request in Chia Application");
-            int walletId = 1;
-            var walletbalance = await walletConnectService.GetWalletBalance(fingerprint, topic, walletId);
-            Console.WriteLine(walletbalance);*/
+            var walletbalance = await walletConnect.GetWalletBalance(fingerprint, topic, 1);
+            Console.WriteLine(walletbalance);
 
             //chia_getCurrentAddress
             Console.WriteLine("Accept confirmation request in Chia Application");
-            int walletId = 1;
-            var walletbalance = await walletConnectService.GetCurrentAddress(fingerprint, topic, walletId);
-            Console.WriteLine(walletbalance);
+            var currentaddress = await walletConnect.GetCurrentAddress(fingerprint, topic, 1);
+            Console.WriteLine(walletbalance);*/
         }
     }
 }
