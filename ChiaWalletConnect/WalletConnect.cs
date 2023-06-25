@@ -2,13 +2,8 @@
 using WalletConnectSharp.Sign.Models;
 using WalletConnectSharp.Sign;
 using WalletConnectSharp.Core.Models.Pairing;
-using Org.BouncyCastle.Asn1.Cms;
 using ChiaWalletConnect.dotnet.Endpoints;
 using ChiaWalletConnect.dotnet.ChiaTypes;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Serialization;
-using Newtonsoft.Json;
-using System;
 using ChiaWalletConnect.dotnet.Utils;
 
 namespace ChiaWalletConnect.dotnet
@@ -49,9 +44,9 @@ namespace ChiaWalletConnect.dotnet
                                 "chia_getWallets",//done
                                 "chia_getTransaction",//done
                                 "chia_getWalletBalance",//done
-                                /*"chia_getWalletBalances",*///1.8.2
+                                "chia_getWalletBalances",//done
                                 "chia_getCurrentAddress",//done
-                                "chia_sendTransaction",
+                                "chia_sendTransaction",//done
                                 "chia_signMessageById",
                                 "chia_signMessageByAddress",
                                 "chia_verifySignature",
@@ -73,20 +68,20 @@ namespace ChiaWalletConnect.dotnet
                                 "chia_addCATToken",
                                 "chia_getNFTs",
                                 "chia_getNFTInfo",
-                                /*"chia_mintNFT",//1.8.2
-                                "chia_transferNFT",//1.8.2
-                                "chia_getNFTsCount",//1.8.2
-                                "chia_createNewDIDWallet",//1.8.2
-                                "chia_setDIDName",//1.8.2
-                                "chia_setNFTDID",//1.8.2
-                                "chia_getNFTWalletsWithDIDs",//1.8.2
-                                "chia_getVCList",//1.8.2
-                                "chia_getVC",//1.8.2
-                                "chia_spendVC",//1.8.2
-                                "chia_addVCProofs",//1.8.2
-                                "chia_getProofsForRoot",//1.8.2
-                                "chia_revokeVC",//1.8.2
-                                "chia_showNotification"*///1.8.2
+                                "chia_mintNFT",
+                                "chia_transferNFT",
+                                "chia_getNFTsCount",
+                                "chia_createNewDIDWallet",
+                                "chia_setDIDName",
+                                "chia_setNFTDID",
+                                "chia_getNFTWalletsWithDIDs",
+                                "chia_getVCList",
+                                "chia_getVC",
+                                "chia_spendVC",
+                                "chia_addVCProofs",
+                                "chia_getProofsForRoot",
+                                "chia_revokeVC",
+                                "chia_showNotification"
                             },
                             Chains = new[] {
                                 "chia:mainnet"
@@ -154,6 +149,19 @@ namespace ChiaWalletConnect.dotnet
             return Converters.ToObject<WalletBalance>(response, "data");
         }
 
+        /// <summary>Requests the asset balances for specific wallets associated with the current wallet key</summary>
+        /// <param name="fingerprint">Fingerprint</param>
+        /// <param name="topic">Topic</param>
+        /// <param name="walletId">Wallet Ids</param>
+        /// <returns>WalletBalances</returns>
+        public async Task<WalletBalancesRecord> GetWalletBalances(string fingerprint, string topic, int[]? walletIds = null)
+        {
+            var data = new GetWalletBalances(fingerprint, walletIds);
+            dynamic response = await client.Request<GetWalletBalances, dynamic>(topic, data);
+
+            return Converters.ToObject<WalletBalancesRecord>(response, "data");
+        }
+
         /// <summary>>Requests the current receive address associated with the current wallet key</summary>
         /// <param name="fingerprint">Fingerprint</param>
         /// <param name="topic">Topic</param>
@@ -165,6 +173,24 @@ namespace ChiaWalletConnect.dotnet
             dynamic response = await client.Request<GetCurrentAddress, dynamic>(topic, data);
 
             return Converters.ToObject<string>(response, "data");
+        }
+
+        /// <summary>Send a transaction to a standard wallet</summary>
+        /// <param name="fingerprint">Fingerprint</param>
+        /// <param name="topic">Topic</param>
+        /// <param name="walletId">Wallet Id</param>
+        /// <param name="amount">Amount</param>
+        /// <param name="fees">Fee</param>
+        /// <param name="address">Address</param>
+        /// <param name="memos">Memos</param>
+        /// <param name="puzzle_decorator">Puzzle Decorator</param>
+        /// <returns></returns>
+        public async Task<SendTransactionRecord> SendTransaction(string fingerprint, string topic, int walletId, ulong amount, ulong fee, string address, string? memos = null, object? puzzle_decorator = null)
+        {
+            var data = new SendTransaction(fingerprint, walletId, amount, fee, address, memos, puzzle_decorator);
+            dynamic response = await client.Request<SendTransaction, dynamic>(topic, data);
+
+            return Converters.ToObject<SendTransactionRecord>(response, "data");
         }
     }
 }

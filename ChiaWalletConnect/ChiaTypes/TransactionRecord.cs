@@ -15,7 +15,7 @@ namespace ChiaWalletConnect.dotnet.ChiaTypes
         public uint ConfirmedAtHeight { get; init; }
         public double CreatedAtTime { get; init; }
         public ulong FeeAmount { get; init; }
-        public object Memos { get; init; }//TODO: deserialize memos
+        public Dictionary<string,string>? Memos { get; init; }
         public string Name { get; init; } = string.Empty;
         public ICollection<Coin> Removals { get; init; } = new List<Coin>();
         public uint Sent { get; init; }

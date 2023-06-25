@@ -35,7 +35,8 @@ namespace ChiaWalletConnect.dotnet
 
             //TODO: add more commands https://github.com/Chia-Network/chia-blockchain-gui/blob/main/packages/gui/src/constants/WalletConnectCommands.tsx
             //TODO: Add Events to permit multiple commands
-            
+            //TODO: Add a wait for sync function if needed
+
             //chia_logIn
             /*Console.WriteLine("Accept confirmation request in Chia Application");
             var login = await walletConnect.LogIn(fingerprint, topic);
@@ -44,7 +45,7 @@ namespace ChiaWalletConnect.dotnet
             //chia_getWallets
             Console.WriteLine("Accept confirmation request in Chia Application");
             var wallets = await walletConnect.GetWallets(fingerprint, topic);
-            Console.WriteLine(wallets);
+            Console.WriteLine(wallets);;
 
             //chia_getTransaction
             Console.WriteLine("Accept confirmation request in Chia Application");
@@ -54,12 +55,22 @@ namespace ChiaWalletConnect.dotnet
             //chia_getWalletBalance
             Console.WriteLine("Accept confirmation request in Chia Application");
             var walletbalance = await walletConnect.GetWalletBalance(fingerprint, topic, 1);
-            Console.WriteLine(walletbalance);
+            Console.WriteLine(walletbalance)
+
+            //chia_getWalletBalances
+            Console.WriteLine("Accept confirmation request in Chia Application");
+            var walletbalances = await walletConnect.GetWalletBalances(fingerprint, topic);
+            Console.WriteLine(walletbalances);
 
             //chia_getCurrentAddress
             Console.WriteLine("Accept confirmation request in Chia Application");
             var currentaddress = await walletConnect.GetCurrentAddress(fingerprint, topic, 1);
-            Console.WriteLine(walletbalance);*/
+            Console.WriteLine(currentaddress);
+
+            //chia_SendTransaction
+            Console.WriteLine("Accept confirmation request in Chia Application");
+            var sendtransaction = await walletConnect.SendTransaction(fingerprint, topic, 1, 1, 0, "xch1zcs7l7z42pmy67s9ajtnjefpg6xgq3ee3la7f4ushzeeua3d9nasjp3kdl", "memo");
+            Console.WriteLine(sendtransaction);*/
         }
     }
 }
