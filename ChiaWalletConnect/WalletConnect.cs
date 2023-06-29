@@ -47,6 +47,7 @@ namespace ChiaWalletConnect.dotnet
                                 "chia_getWalletBalances",//done
                                 "chia_getCurrentAddress",//done
                                 "chia_sendTransaction",//done
+                                //"chia_spendClawbackCoins", //not yet implemented in 1.8.2
                                 "chia_signMessageById",
                                 "chia_signMessageByAddress",
                                 "chia_verifySignature",
@@ -99,98 +100,140 @@ namespace ChiaWalletConnect.dotnet
             return sessionData.Topic;
         }
         /// <summary>Log in to a wallet</summary>
-        /// <param name="fingerprint">Fingerprint</param>
-        /// <param name="topic">Topic</param>
+        /// <param name="fingerprint">Chia wallet fingerprint</param>
+        /// <param name="topic">Wallet connect pairing topic.</param>
         /// <returns>A Json object</returns>
         public async Task<LoginResult> LogIn(string fingerprint, string topic)
         {
-            var data = new LogIn(fingerprint);
+            LogIn data = new LogIn(fingerprint);
             dynamic response = await client.Request<LogIn, dynamic>(topic, data);
 
             return Converters.ToObject<LoginResult>(response, "data");
         }
 
         /// <summary>Requests a complete listing of the wallets associated with the current wallet key</summary>
-        /// <param name="fingerprint">Fingerprint</param>
-        /// <param name="topic">Topic</param>
+        /// <param name="fingerprint">Chia wallet fingerprint</param>
+        /// <param name="topic">Wallet connect pairing topic.</param>
         /// <param name="include_data">Include Wallet Metadata</param>
         /// <returns>A Json object</returns>
         public async Task<IEnumerable<WalletInfo>> GetWallets(string fingerprint, string topic, bool include_data = false)
         {
-            var data = new GetWallets(fingerprint, include_data);
+            GetWallets data = new GetWallets(fingerprint, include_data);
             dynamic response = await client.Request<GetWallets, dynamic>(topic, data);
 
             return Converters.ToObject<IEnumerable<WalletInfo>>(response, "data");
         }
 
         /// <summary>Requests details for a specific transaction</summary>
-        /// <param name="fingerprint">Fingerprint</param>
-        /// <param name="topic">Topic</param>
+        /// <param name="fingerprint">Chia wallet fingerprint</param>
+        /// <param name="topic">Wallet connect pairing topic.</param>
         /// <param name="transactionId">Transaction Id</param>
         /// <returns>A Json object</returns>
         public async Task<TransactionRecord> GetTransaction(string fingerprint, string topic, string transactionId)
         {
-            var data = new GetTransaction(fingerprint, transactionId);
+            GetTransaction data = new GetTransaction(fingerprint, transactionId);
             dynamic response = await client.Request<GetTransaction, dynamic>(topic, data);
 
             return Converters.ToObject<TransactionRecord>(response, "data");
         }
 
         /// <summary>Requests the asset balance for a specific wallet associated with the current wallet key</summary>
-        /// <param name="fingerprint">Fingerprint</param>
-        /// <param name="topic">Topic</param>
+        /// <param name="fingerprint">Chia wallet fingerprint</param>
+        /// <param name="topic">Wallet connect pairing topic.</param>
         /// <param name="walletId">Wallet Id</param>
         /// <returns>WalletBalance</returns>
         public async Task<WalletBalance> GetWalletBalance(string fingerprint, string topic, int walletId = 1)
         {
-            var data = new GetWalletBalance(fingerprint, walletId);
+            GetWalletBalance data = new GetWalletBalance(fingerprint, walletId);
             dynamic response = await client.Request<GetWalletBalance, dynamic>(topic, data);
 
             return Converters.ToObject<WalletBalance>(response, "data");
         }
 
         /// <summary>Requests the asset balances for specific wallets associated with the current wallet key</summary>
-        /// <param name="fingerprint">Fingerprint</param>
-        /// <param name="topic">Topic</param>
+        /// <param name="fingerprint">Chia wallet fingerprint</param>
+        /// <param name="topic">Wallet connect pairing topic.</param>
         /// <param name="walletId">Wallet Ids</param>
         /// <returns>WalletBalances</returns>
         public async Task<WalletBalancesRecord> GetWalletBalances(string fingerprint, string topic, int[]? walletIds = null)
         {
-            var data = new GetWalletBalances(fingerprint, walletIds);
+            GetWalletBalances data = new GetWalletBalances(fingerprint, walletIds);
             dynamic response = await client.Request<GetWalletBalances, dynamic>(topic, data);
 
             return Converters.ToObject<WalletBalancesRecord>(response, "data");
         }
 
         /// <summary>>Requests the current receive address associated with the current wallet key</summary>
-        /// <param name="fingerprint">Fingerprint</param>
-        /// <param name="topic">Topic</param>
+        /// <param name="fingerprint">Chia wallet fingerprint</param>
+        /// <param name="topic">Wallet connect pairing topic.</param>
         /// <param name="walletId">Wallet Id</param>
         /// <returns>string</returns>
         public async Task<string> GetCurrentAddress(string fingerprint, string topic, int walletId = 1)
         {
-            var data = new GetCurrentAddress(fingerprint, walletId);
+            GetCurrentAddress data = new GetCurrentAddress(fingerprint, walletId);
             dynamic response = await client.Request<GetCurrentAddress, dynamic>(topic, data);
 
             return Converters.ToObject<string>(response, "data");
         }
 
         /// <summary>Send a transaction to a standard wallet</summary>
-        /// <param name="fingerprint">Fingerprint</param>
-        /// <param name="topic">Topic</param>
+        /// <param name="fingerprint">Chia wallet fingerprint</param>
+        /// <param name="topic">Wallet connect pairing topic.</param>
         /// <param name="walletId">Wallet Id</param>
         /// <param name="amount">Amount</param>
-        /// <param name="fees">Fee</param>
+        /// <param name="fee">Fee</param>
         /// <param name="address">Address</param>
         /// <param name="memos">Memos</param>
         /// <param name="puzzle_decorator">Puzzle Decorator</param>
         /// <returns></returns>
         public async Task<SendTransactionRecord> SendTransaction(string fingerprint, string topic, int walletId, ulong amount, ulong fee, string address, string? memos = null, object? puzzle_decorator = null)
         {
-            var data = new SendTransaction(fingerprint, walletId, amount, fee, address, memos, puzzle_decorator);
+            SendTransaction data = new SendTransaction(fingerprint, walletId, amount, fee, address, memos, puzzle_decorator);
             dynamic response = await client.Request<SendTransaction, dynamic>(topic, data);
 
             return Converters.ToObject<SendTransactionRecord>(response, "data");
+        }
+
+        /// <summary>Claw back or claim claw back transaction</summary>
+        /// <param name="fingerprint">Chia wallet fingerprint</param>
+        /// <param name="topic">Wallet connect pairing topic.</param>
+        /// <param name="coinIds">CoinIDs</param>
+        /// <param name="fee">Fee</param>
+        /// <returns></returns>
+        public async Task<ClawbackRecord> SpendClawbackCoins(string fingerprint, string topic, int walletId, string[] coinIds, ulong fee)
+        {
+            SpendClawbackCoins data = new SpendClawbackCoins(fingerprint, walletId, coinIds, fee);
+            dynamic response = await client.Request<SpendClawbackCoins, dynamic>(topic, data);
+
+            return Converters.ToObject<ClawbackRecord>(response, "data");
+        }
+
+        /// <summary>Signs a message with the private key of a given DID.</summary>
+        /// <param name="fingerprint">Chia wallet fingerprint</param>
+        /// <param name="topic">Wallet connect pairing topic.</param>
+        /// <param name="id">DID to sign the message with the key of.</param>
+        /// <param name="message">Message to sign.</param>
+        /// <returns></returns>
+        public async Task<SignMessageByIdRecord> SignMessageById(string fingerprint, string topic, string id, string message)
+        {
+            SignMessageById data = new SignMessageById(fingerprint, id, message);
+            dynamic response = await client.Request<SignMessageById, dynamic>(topic, data);
+
+            return Converters.ToObject<SignMessageByIdRecord>(response, "data");
+        }
+
+        /// <summary>Signs a message with the private key of a given address.</summary>
+        /// <param name="fingerprint">Chia wallet fingerprint</param>
+        /// <param name="topic">Wallet connect pairing topic.</param>
+        /// <param name="address">Address to sign the message with the key of.</param>
+        /// <param name="message">Message to sign.</param>
+        /// <returns></returns>
+        public async Task<SignMessageByAddressRecord> SignMessageByAddress(string fingerprint, string topic, string address, string message)
+        {
+            SignMessageByAddress data = new SignMessageByAddress(fingerprint, address, message);
+            dynamic response = await client.Request<SignMessageByAddress, dynamic>(topic, data);
+
+            return Converters.ToObject<SignMessageByAddressRecord>(response, "data");
         }
     }
 }
