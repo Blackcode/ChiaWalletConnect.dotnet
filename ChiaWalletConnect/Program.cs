@@ -65,6 +65,11 @@ namespace ChiaWalletConnect.dotnet
             var currentaddress = await walletConnect.GetCurrentAddress(fingerprint, topic, 1);
             Console.WriteLine(currentaddress); */
 
+            //chia_getNextAddress
+            /* Console.WriteLine("Accept confirmation request in Chia Application");
+            var currentaddress = await walletConnect.GetNextAddress(fingerprint, topic, 1, true);
+            Console.WriteLine(currentaddress); */
+
             //chia_SendTransaction
             /* Console.WriteLine("Accept confirmation request in Chia Application");
             var sendtransaction = await walletConnect.SendTransaction(fingerprint, topic, 1, 1, 0, "xch1ndw4800z234plztr4q02yz9x76fh5yset958ydf3239y4x2gyynsrx3uqf", "memo");

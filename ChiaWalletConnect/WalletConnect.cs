@@ -46,6 +46,7 @@ namespace ChiaWalletConnect.dotnet
                                 "chia_getWalletBalance",//done
                                 "chia_getWalletBalances",//done
                                 "chia_getCurrentAddress",//done
+                                "chia_getNextAddress",
                                 "chia_sendTransaction",//done
                                 //"chia_spendClawbackCoins", //not yet implemented in 1.8.2
                                 "chia_signMessageById",
@@ -172,6 +173,19 @@ namespace ChiaWalletConnect.dotnet
         {
             GetCurrentAddress data = new GetCurrentAddress(fingerprint, walletId);
             dynamic response = await client.Request<GetCurrentAddress, dynamic>(topic, data);
+
+            return Converters.ToObject<string>(response, "data");
+        }
+
+        /// <summary>>Requests the current receive address associated with the current wallet key</summary>
+        /// <param name="fingerprint">Chia wallet fingerprint</param>
+        /// <param name="topic">Wallet connect pairing topic.</param>
+        /// <param name="walletId">Wallet Id</param>
+        /// <returns>string</returns>
+        public async Task<string> GetNextAddress(string fingerprint, string topic, int walletId = 1, bool newAddress = true)
+        {
+            GetNextAddress data = new GetNextAddress(fingerprint, walletId, newAddress);
+            dynamic response = await client.Request<GetNextAddress, dynamic>(topic, data);
 
             return Converters.ToObject<string>(response, "data");
         }
