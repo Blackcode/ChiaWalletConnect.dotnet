@@ -1,4 +1,5 @@
-﻿using WalletConnectSharp.Core.Models.Pairing;
+﻿using ChiaWalletConnect.dotnet.ChiaTypes;
+using WalletConnectSharp.Core.Models.Pairing;
 
 namespace ChiaWalletConnect.dotnet
 {
@@ -35,61 +36,67 @@ namespace ChiaWalletConnect.dotnet
             //TODO: Add Events to permit multiple commands
             //TODO: Add a wait for sync function if needed
 
+            /*
             //chia_logIn
-            /* Console.WriteLine("Accept confirmation request in Chia Application");
-            var login = await walletConnect.LogIn(fingerprint, topic);
-            Console.WriteLine(login); */
+            Console.WriteLine("Accept confirmation request in Chia Application");
+            LoginResult chia_logIn = await walletConnect.LogIn(fingerprint, topic);
+            Console.WriteLine(chia_logIn);
 
             //chia_getWallets
-            /* Console.WriteLine("Accept confirmation request in Chia Application");
-            var wallets = await walletConnect.GetWallets(fingerprint, topic);
-            Console.WriteLine(wallets); */
+            Console.WriteLine("Accept confirmation request in Chia Application");
+            IEnumerable<WalletInfo> chia_getWallets = await walletConnect.GetWallets(fingerprint, topic);
+            Console.WriteLine(chia_getWallets);
 
             //chia_getTransaction
-            /* Console.WriteLine("Accept confirmation request in Chia Application");
-            var transaction = await walletConnect.GetTransaction(fingerprint, topic, "7d61d94db2ed2f210d27cc486c33bf642c72a448af8f0e00de84bef9213fd598");
-            Console.WriteLine(transaction); */
+            Console.WriteLine("Accept confirmation request in Chia Application");
+            TransactionRecord chia_getTransaction = await walletConnect.GetTransaction(fingerprint, topic, "7d61d94db2ed2f210d27cc486c33bf642c72a448af8f0e00de84bef9213fd598");
+            Console.WriteLine(chia_getTransaction);
 
             //chia_getWalletBalance
-            /* Console.WriteLine("Accept confirmation request in Chia Application");
-            var walletbalance = await walletConnect.GetWalletBalance(fingerprint, topic, 1);
-            Console.WriteLine(walletbalance); */
+            Console.WriteLine("Accept confirmation request in Chia Application");
+            WalletBalance chia_getWalletBalance = await walletConnect.GetWalletBalance(fingerprint, topic, 1);
+            Console.WriteLine(chia_getWalletBalance);
 
             //chia_getWalletBalances
-            /* Console.WriteLine("Accept confirmation request in Chia Application");
-            var walletbalances = await walletConnect.GetWalletBalances(fingerprint, topic);
-            Console.WriteLine(walletbalances); */
+            Console.WriteLine("Accept confirmation request in Chia Application");
+            Dictionary<string, WalletBalance> chia_getWalletBalances = await walletConnect.GetWalletBalances(fingerprint, topic);
+            Console.WriteLine(chia_getWalletBalances);
 
             //chia_getCurrentAddress
-            /* Console.WriteLine("Accept confirmation request in Chia Application");
-            var currentaddress = await walletConnect.GetCurrentAddress(fingerprint, topic, 1);
-            Console.WriteLine(currentaddress); */
+            Console.WriteLine("Accept confirmation request in Chia Application");
+            string chia_getCurrentAddress = await walletConnect.GetCurrentAddress(fingerprint, topic, 1);
+            Console.WriteLine(chia_getCurrentAddress); 
 
             //chia_getNextAddress
-            /* Console.WriteLine("Accept confirmation request in Chia Application");
-            var currentaddress = await walletConnect.GetNextAddress(fingerprint, topic, 1, true);
-            Console.WriteLine(currentaddress); */
+            Console.WriteLine("Accept confirmation request in Chia Application");
+            string chia_getNextAddress = await walletConnect.GetNextAddress(fingerprint, topic, 1, true);
+            Console.WriteLine(chia_getNextAddress);
 
-            //chia_SendTransaction
-            /* Console.WriteLine("Accept confirmation request in Chia Application");
-            var sendtransaction = await walletConnect.SendTransaction(fingerprint, topic, 1, 1, 0, "xch1ndw4800z234plztr4q02yz9x76fh5yset958ydf3239y4x2gyynsrx3uqf", "memo");
-            Console.WriteLine(sendtransaction); */
+            //chia_sendTransaction
+            Console.WriteLine("Accept confirmation request in Chia Application");
+            SendTransactionRecord chia_sendTransaction = await walletConnect.SendTransaction(fingerprint, topic, 1, 1, 0, "xch1ndw4800z234plztr4q02yz9x76fh5yset958ydf3239y4x2gyynsrx3uqf", "memo");
+            Console.WriteLine(chia_sendTransaction);
 
-            //Wallet connection is not yet implemented in Chia client 1.8.2
-            //chia_SpendClawbackCoins 
-            /* Console.WriteLine("Accept confirmation request in Chia Application");
-            var spendClawbackCoins = await walletConnect.SpendClawbackCoins(fingerprint, topic, 1, new string[] { "aee3c32c8af74e6a2ca35f4d2abe30e7207cb97ba1270bfb4ace13d3aec0dfdf" }, 0);
-            Console.WriteLine(spendClawbackCoins); */
+            //chia_signMessageById
+            Console.WriteLine("Accept confirmation request in Chia Application");
+            SignMessageByIdRecord chia_signMessageById = await walletConnect.SignMessageById(fingerprint, topic, "did:chia:1y3sf537w3efyd3xqxfeat6ul75ex4fzcvg7ey2ntth74lwe6ymcqkmp3vz", "test");
+            Console.WriteLine(chia_signMessageById);
 
-            //chia_SignMessageById
-            /*Console.WriteLine("Accept confirmation request in Chia Application");
-            var signMessageById = await walletConnect.SignMessageById(fingerprint, topic, "did:chia:1y3sf537w3efyd3xqxfeat6ul75ex4fzcvg7ey2ntth74lwe6ymcqkmp3vz", "test");
-            Console.WriteLine(signMessageById); */
+            //chia_signMessageByAddress
+            Console.WriteLine("Accept confirmation request in Chia Application");
+            SignMessageByAddressRecord chia_signMessageByAddress = await walletConnect.SignMessageByAddress(fingerprint, topic, "xch1ndw4800z234plztr4q02yz9x76fh5yset958ydf3239y4x2gyynsrx3uqf", "test");
+            Console.WriteLine(chia_signMessageByAddress);
 
-            //chia_SignMessageByAddress
-            /*Console.WriteLine("Accept confirmation request in Chia Application");
-            var signMessageByAddress = await walletConnect.SignMessageByAddress(fingerprint, topic, "xch1ndw4800z234plztr4q02yz9x76fh5yset958ydf3239y4x2gyynsrx3uqf", "test");
-            Console.WriteLine(signMessageByAddress); */
+            //chia_verifySignature
+            Console.WriteLine("Accept confirmation request in Chia Application");
+            bool chia_verifySignature = await walletConnect.VerifySignature(fingerprint, topic, "test", "a385c0bf16c78b6905f559739a4b51dd6a4eeccc482913f362539e080e5bdcfb039a0feb9cf5d28279c8d4fd49699b73", "a20e52dbdcd51d41a7a41ab3847a5348ab6f754122c6e61d87ac614feb9eec5cfd96e2e81083078e7a112290e631e7560c0de34305791657c476df6c7f1278dc8491a7ae09076c257d4fd1b053af862e66e443619ac18a3cf13e6baa62310617");
+            Console.WriteLine(chia_verifySignature);
+
+            //chia_getSyncStatus
+            Console.WriteLine("Accept confirmation request in Chia Application");
+            var chia_getSyncStatus = await walletConnect.GetSyncStatus(fingerprint, topic);
+            Console.WriteLine(chia_getSyncStatus);
+            */
         }
     }
 }

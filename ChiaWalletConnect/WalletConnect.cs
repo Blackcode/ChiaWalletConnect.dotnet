@@ -40,19 +40,17 @@ namespace ChiaWalletConnect.dotnet
                     { "chia",
                         new RequiredNamespace() {
                             Methods = new[] {
-                                "chia_logIn",//done
-                                "chia_getWallets",//done
-                                "chia_getTransaction",//done
-                                "chia_getWalletBalance",//done
-                                "chia_getWalletBalances",//done
-                                "chia_getCurrentAddress",//done
-                                "chia_getNextAddress",
-                                "chia_sendTransaction",//done
-                                //"chia_spendClawbackCoins", //not yet implemented in 1.8.2
-                                "chia_signMessageById",
-                                "chia_signMessageByAddress",
-                                "chia_verifySignature",
-                                "chia_getNextAddress",
+                                "chia_logIn",//Done v2.
+                                "chia_getWallets",//Done v2.
+                                "chia_getTransaction",//Done v2.
+                                "chia_getWalletBalance",//Done v2.
+                                "chia_getWalletBalances",//Done v2.
+                                "chia_getCurrentAddress",//Done v2.
+                                "chia_sendTransaction",//Done v2.
+                                "chia_signMessageById",//Done v2.
+                                "chia_signMessageByAddress",//Done v2.
+                                "chia_verifySignature",//Done v2.
+                                "chia_getNextAddress",//Done v2.
                                 "chia_getSyncStatus",
                                 "chia_getAllOffers",
                                 "chia_getOffersCount",
@@ -100,10 +98,12 @@ namespace ChiaWalletConnect.dotnet
 
             return sessionData.Topic;
         }
-        /// <summary>Log in to a wallet</summary>
-        /// <param name="fingerprint">Chia wallet fingerprint</param>
+
+        #region chia_logIn
+        /// <summary>Logs in to a wallet key (account), as identified by its fingerprint.</summary>
+        /// <param name="fingerprint">Chia wallet fingerprint.</param>
         /// <param name="topic">Wallet connect pairing topic.</param>
-        /// <returns>A Json object</returns>
+        /// <returns>The output is a value of type LoginResult.</returns>
         public async Task<LoginResult> LogIn(string fingerprint, string topic)
         {
             LogIn data = new LogIn(fingerprint);
@@ -111,12 +111,14 @@ namespace ChiaWalletConnect.dotnet
 
             return Converters.ToObject<LoginResult>(response, "data");
         }
+        #endregion
 
-        /// <summary>Requests a complete listing of the wallets associated with the current wallet key</summary>
-        /// <param name="fingerprint">Chia wallet fingerprint</param>
+        #region chia_getWallets
+        /// <summary>Requests a complete listing of the wallets associated with the current wallet key.</summary>
+        /// <param name="fingerprint">Chia wallet fingerprint.</param>
         /// <param name="topic">Wallet connect pairing topic.</param>
-        /// <param name="include_data">Include Wallet Metadata</param>
-        /// <returns>A Json object</returns>
+        /// <param name="include_data">Whether to include metadata.</param>
+        /// <returns>The output is a list of <see cref="WalletInfo"/>s.</returns>
         public async Task<IEnumerable<WalletInfo>> GetWallets(string fingerprint, string topic, bool include_data = false)
         {
             GetWallets data = new GetWallets(fingerprint, include_data);
@@ -124,12 +126,14 @@ namespace ChiaWalletConnect.dotnet
 
             return Converters.ToObject<IEnumerable<WalletInfo>>(response, "data");
         }
+        #endregion
 
-        /// <summary>Requests details for a specific transaction</summary>
-        /// <param name="fingerprint">Chia wallet fingerprint</param>
+        #region chia_getTransaction
+        /// <summary>Gets a transaction record by its id.</summary>
+        /// <param name="fingerprint">Chia wallet fingerprint.</param>
         /// <param name="topic">Wallet connect pairing topic.</param>
-        /// <param name="transactionId">Transaction Id</param>
-        /// <returns>A Json object</returns>
+        /// <param name="transactionId">Transaction id.</param>
+        /// <returns>The output is a value of type <see cref="TransactionRecord"/>.</returns>
         public async Task<TransactionRecord> GetTransaction(string fingerprint, string topic, string transactionId)
         {
             GetTransaction data = new GetTransaction(fingerprint, transactionId);
@@ -137,12 +141,14 @@ namespace ChiaWalletConnect.dotnet
 
             return Converters.ToObject<TransactionRecord>(response, "data");
         }
+        #endregion
 
-        /// <summary>Requests the asset balance for a specific wallet associated with the current wallet key</summary>
-        /// <param name="fingerprint">Chia wallet fingerprint</param>
+        #region chia_getWalletBalance
+        /// <summary>Requests the asset balance for a specific wallet associated with the current wallet key.</summary>
+        /// <param name="fingerprint">Chia wallet fingerprint.</param>
         /// <param name="topic">Wallet connect pairing topic.</param>
-        /// <param name="walletId">Wallet Id</param>
-        /// <returns>WalletBalance</returns>
+        /// <param name="walletId">Wallet id to get the balance of.</param>
+        /// <returns>The output is a value of type <see cref="WalletBalance"/>.</returns>
         public async Task<WalletBalance> GetWalletBalance(string fingerprint, string topic, int walletId = 1)
         {
             GetWalletBalance data = new GetWalletBalance(fingerprint, walletId);
@@ -150,25 +156,29 @@ namespace ChiaWalletConnect.dotnet
 
             return Converters.ToObject<WalletBalance>(response, "data");
         }
+        #endregion
 
-        /// <summary>Requests the asset balances for specific wallets associated with the current wallet key</summary>
-        /// <param name="fingerprint">Chia wallet fingerprint</param>
+        #region chia_getWalletBalances
+        /// <summary>Requests the asset balances for specific wallets associated with the current wallet key.</summary>
+        /// <param name="fingerprint">Chia wallet fingerprint.</param>
         /// <param name="topic">Wallet connect pairing topic.</param>
-        /// <param name="walletId">Wallet Ids</param>
-        /// <returns>WalletBalances</returns>
-        public async Task<WalletBalancesRecord> GetWalletBalances(string fingerprint, string topic, int[]? walletIds = null)
+        /// <param name="walletIds">Wallet ids to get the balance of.</param>
+        /// <returns>The output is a list of <see cref="WalletBalance"/>s.</returns>
+        public async Task<Dictionary<string, WalletBalance>> GetWalletBalances(string fingerprint, string topic, int[]? walletIds = null)
         {
             GetWalletBalances data = new GetWalletBalances(fingerprint, walletIds);
             dynamic response = await client.Request<GetWalletBalances, dynamic>(topic, data);
 
-            return Converters.ToObject<WalletBalancesRecord>(response, "data");
+            return Converters.ToObject<Dictionary<string, WalletBalance>>(response.data, "walletBalances");
         }
+        #endregion
 
-        /// <summary>>Requests the current receive address associated with the current wallet key</summary>
-        /// <param name="fingerprint">Chia wallet fingerprint</param>
+        #region chia_getCurrentAddress
+        /// <summary>Gets the address of the current derivation index.</summary>
+        /// <param name="fingerprint">Chia wallet fingerprint.</param>
         /// <param name="topic">Wallet connect pairing topic.</param>
-        /// <param name="walletId">Wallet Id</param>
-        /// <returns>string</returns>
+        /// <param name="walletId">Wallet id to get the address of.</param>
+        /// <returns>The output is a bech32m encoded address of type string.</returns>
         public async Task<string> GetCurrentAddress(string fingerprint, string topic, int walletId = 1)
         {
             GetCurrentAddress data = new GetCurrentAddress(fingerprint, walletId);
@@ -176,12 +186,15 @@ namespace ChiaWalletConnect.dotnet
 
             return Converters.ToObject<string>(response, "data");
         }
+        #endregion
 
-        /// <summary>>Requests the current receive address associated with the current wallet key</summary>
-        /// <param name="fingerprint">Chia wallet fingerprint</param>
+        #region chia_getNextAddress
+        /// <summary>>Gets the address of the next derivation index associated with the current wallet key.</summary>
+        /// <param name="fingerprint">Chia wallet fingerprint.</param>
         /// <param name="topic">Wallet connect pairing topic.</param>
-        /// <param name="walletId">Wallet Id</param>
-        /// <returns>string</returns>
+        /// <param name="walletId">Wallet id to get the address of.</param>
+        /// <param name="newAddress">Whether to increase derivation index.</param>
+        /// <returns>The output is a bech32m encoded address of type string.</returns>
         public async Task<string> GetNextAddress(string fingerprint, string topic, int walletId = 1, bool newAddress = true)
         {
             GetNextAddress data = new GetNextAddress(fingerprint, walletId, newAddress);
@@ -189,45 +202,39 @@ namespace ChiaWalletConnect.dotnet
 
             return Converters.ToObject<string>(response, "data");
         }
+        #endregion
 
-        /// <summary>Send a transaction to a standard wallet</summary>
-        /// <param name="fingerprint">Chia wallet fingerprint</param>
+        #region chia_sendTransaction
+        /// <summary>Sends an amount of mojos in a given standard wallet to a recipient address.</summary>
+        /// <param name="fingerprint">Chia wallet fingerprint.</param>
         /// <param name="topic">Wallet connect pairing topic.</param>
-        /// <param name="walletId">Wallet Id</param>
-        /// <param name="amount">Amount</param>
-        /// <param name="fee">Fee</param>
-        /// <param name="address">Address</param>
-        /// <param name="memos">Memos</param>
-        /// <param name="puzzle_decorator">Puzzle Decorator</param>
-        /// <returns></returns>
-        public async Task<SendTransactionRecord> SendTransaction(string fingerprint, string topic, int walletId, ulong amount, ulong fee, string address, string? memos = null, object? puzzle_decorator = null)
+        /// <param name="walletId">Wallet id to use coins from.</param>
+        /// <param name="amount">Amount in mojos.</param>
+        /// <param name="fee">Transaction fee in mojos.</param>
+        /// <param name="address">Bech32m encoded recipient address.</param>
+        /// <param name="memos">A memo that helps the receiver side to identify the payment.</param>
+        /// <param name="puzzle_decorator">A inner puzzle decorator</param>
+        /// <returns>The output is a value of type <see cref="SendTransactionRecord"/>.</returns>
+        public async Task<SendTransactionRecord> SendTransaction(string fingerprint, string topic, int walletId, ulong amount, ulong fee, string address, string? memo = null, object? puzzle_decorator = null)
         {
+            string[]? memos = null;
+            if (memo != null)
+                memos = new string[] { memo };
+
             SendTransaction data = new SendTransaction(fingerprint, walletId, amount, fee, address, memos, puzzle_decorator);
             dynamic response = await client.Request<SendTransaction, dynamic>(topic, data);
 
             return Converters.ToObject<SendTransactionRecord>(response, "data");
         }
+        #endregion
 
-        /// <summary>Claw back or claim claw back transaction</summary>
-        /// <param name="fingerprint">Chia wallet fingerprint</param>
-        /// <param name="topic">Wallet connect pairing topic.</param>
-        /// <param name="coinIds">CoinIDs</param>
-        /// <param name="fee">Fee</param>
-        /// <returns></returns>
-        public async Task<ClawbackRecord> SpendClawbackCoins(string fingerprint, string topic, int walletId, string[] coinIds, ulong fee)
-        {
-            SpendClawbackCoins data = new SpendClawbackCoins(fingerprint, walletId, coinIds, fee);
-            dynamic response = await client.Request<SpendClawbackCoins, dynamic>(topic, data);
-
-            return Converters.ToObject<ClawbackRecord>(response, "data");
-        }
-
+        #region chia_signMessageById
         /// <summary>Signs a message with the private key of a given DID.</summary>
-        /// <param name="fingerprint">Chia wallet fingerprint</param>
+        /// <param name="fingerprint">Chia wallet fingerprint.</param>
         /// <param name="topic">Wallet connect pairing topic.</param>
         /// <param name="id">DID to sign the message with the key of.</param>
         /// <param name="message">Message to sign.</param>
-        /// <returns></returns>
+        /// <returns>The output is a value of type <see cref="SignMessageByIdRecord"/>.</returns>
         public async Task<SignMessageByIdRecord> SignMessageById(string fingerprint, string topic, string id, string message)
         {
             SignMessageById data = new SignMessageById(fingerprint, id, message);
@@ -235,13 +242,15 @@ namespace ChiaWalletConnect.dotnet
 
             return Converters.ToObject<SignMessageByIdRecord>(response, "data");
         }
+        #endregion
 
+        #region chia_signMessageByAddress
         /// <summary>Signs a message with the private key of a given address.</summary>
-        /// <param name="fingerprint">Chia wallet fingerprint</param>
+        /// <param name="fingerprint">Chia wallet fingerprint.</param>
         /// <param name="topic">Wallet connect pairing topic.</param>
         /// <param name="address">Address to sign the message with the key of.</param>
         /// <param name="message">Message to sign.</param>
-        /// <returns></returns>
+        /// <returns>The output is a value of type <see cref="SignMessageByAddressRecord"/>.</returns>
         public async Task<SignMessageByAddressRecord> SignMessageByAddress(string fingerprint, string topic, string address, string message)
         {
             SignMessageByAddress data = new SignMessageByAddress(fingerprint, address, message);
@@ -249,5 +258,39 @@ namespace ChiaWalletConnect.dotnet
 
             return Converters.ToObject<SignMessageByAddressRecord>(response, "data");
         }
+        #endregion
+
+        #region chia_verifySignature
+        /// <summary>Verifies a signature over a message from a given public key.</summary>
+        /// <param name="fingerprint">Chia wallet fingerprint.</param>
+        /// <param name="topic">Wallet connect pairing topic.</param>
+        /// <param name="message">Message to verify.</param>
+        /// <param name="pubkey">Hex encoded public key.</param>
+        /// <param name="signature">Hex encoded BLS12-381 signature.</param>
+        /// <param name="address">Address used for signing.</param>
+        /// <param name="signingMode">Signing mode used.</param>
+        /// <returns>The output is a value of type <see cref="bool"/>.</returns>
+        public async Task<bool> VerifySignature(string fingerprint, string topic, string message, string pubkey, string signature, string? address = null, string? signingMode = "BLS_SIG_BLS12381G2_XMD:SHA-256_SSWU_RO_AUG:CHIP-0002_")
+        {
+            VerifySignature data = new VerifySignature(fingerprint, message, pubkey, signature, address, signingMode);
+            dynamic response = await client.Request<VerifySignature, dynamic>(topic, data);
+
+            return Converters.ToObject<bool>(response.data, "isValid");
+        }
+        #endregion
+
+        #region chia_getSyncStatus
+        /// <summary>Requests the syncing status of current wallet.</summary>
+        /// <param name="fingerprint">Chia wallet fingerprint.</param>
+        /// <param name="topic">Wallet connect pairing topic.</param>
+        /// <returns>The output is a value of type <see cref="SyncStatus"/>.</returns>
+        public async Task<SyncStatus> GetSyncStatus(string fingerprint, string topic)
+        {
+            GetSyncStatus data = new GetSyncStatus(fingerprint);
+            dynamic response = await client.Request<GetSyncStatus, dynamic>(topic, data);
+
+            return Converters.ToObject<SyncStatus>(response, "data");
+        }
+        #endregion
     }
 }

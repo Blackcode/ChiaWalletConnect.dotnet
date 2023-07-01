@@ -6,8 +6,8 @@ namespace ChiaWalletConnect.dotnet.Endpoints
     internal class GetWalletBalances
     {
         public string fingerprint { get; set; }
-        public int[] walletIds { get; set; }
-        public GetWalletBalances(string fingerprint, int[] walletIds)
+        public int[]? walletIds { get; set; }
+        public GetWalletBalances(string fingerprint, int[]? walletIds)
         {
             this.fingerprint = fingerprint;
             this.walletIds = walletIds;
