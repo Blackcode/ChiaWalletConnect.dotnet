@@ -51,9 +51,9 @@ namespace ChiaWalletConnect.dotnet
                                 "chia_signMessageByAddress",//Done v2.
                                 "chia_verifySignature",//Done v2.
                                 "chia_getNextAddress",//Done v2.
-                                "chia_getSyncStatus",
-                                "chia_getAllOffers",
-                                "chia_getOffersCount",
+                                "chia_getSyncStatus",//Done v2.
+                                "chia_getAllOffers",//Done v2. Waiting for fix to be done https://github.com/WalletConnect/WalletConnectSharp/pull/104
+                                "chia_getOffersCount",//Done v2.
                                 "chia_createOfferForIds",
                                 "chia_cancelOffer",
                                 "chia_checkOfferValidity",
@@ -290,6 +290,34 @@ namespace ChiaWalletConnect.dotnet
             dynamic response = await client.Request<GetSyncStatus, dynamic>(topic, data);
 
             return Converters.ToObject<SyncStatus>(response, "data");
+        }
+        #endregion
+
+        #region chia_getAllOffers
+        /// <summary>>Requests a complete listing of the offers associated with the current wallet key.</summary>
+        /// <param name="fingerprint"></param>
+        /// <param name="topic"></param>
+        /// <returns></returns>
+        public async Task<object> GetAllOffers(string fingerprint, string topic, int start = 0, int end = 10, SortKey sortKey = SortKey.CONFIRMED_AT_HEIGHT, bool reverse = true, bool includeMyOffers = true, bool includeTakenOffers = true)
+        {
+            GetAllOffers data = new GetAllOffers(fingerprint, start, end, sortKey, reverse, includeMyOffers, includeTakenOffers);
+            dynamic response = await client.Request<GetAllOffers, dynamic>(topic, data);
+
+            return Converters.ToObject<object>(response, "data");
+        }
+        #endregion
+
+        #region chia_getOffersCount
+        /// <summary>Requests the number of offers associated with the current wallet key.</summary>
+        /// <param name="fingerprint">Chia wallet fingerprint.</param>
+        /// <param name="topic">Wallet connect pairing topic.</param>
+        /// <returns>The output is a value of type <see cref="OfferCountResult"/>.</returns>
+        public async Task<OfferCountResult> GetOffersCount(string fingerprint, string topic)
+        {
+            GetOffersCount data = new GetOffersCount(fingerprint);
+            dynamic response = await client.Request<GetOffersCount, dynamic>(topic, data);
+
+            return Converters.ToObject<OfferCountResult>(response, "data");
         }
         #endregion
     }

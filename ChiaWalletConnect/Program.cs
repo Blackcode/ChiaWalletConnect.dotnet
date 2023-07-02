@@ -96,6 +96,16 @@ namespace ChiaWalletConnect.dotnet
             Console.WriteLine("Accept confirmation request in Chia Application");
             var chia_getSyncStatus = await walletConnect.GetSyncStatus(fingerprint, topic);
             Console.WriteLine(chia_getSyncStatus);
+            
+            //chia_getAllOffers - Waiting for fix to be done https://github.com/WalletConnect/WalletConnectSharp/pull/104
+            Console.WriteLine("Accept confirmation request in Chia Application");
+            var chia_getAllOffers = await walletConnect.GetAllOffers(fingerprint, topic, 0, 10, SortKey.CONFIRMED_AT_HEIGHT, false, true, true);
+            Console.WriteLine(chia_getAllOffers);
+            
+            //chia_getOffersCount
+            Console.WriteLine("Accept confirmation request in Chia Application");
+            var chia_getOffersCount = await walletConnect.GetOffersCount(fingerprint, topic);
+            Console.WriteLine(chia_getOffersCount);
             */
         }
     }
