@@ -5,6 +5,9 @@ using WalletConnectSharp.Core.Models.Pairing;
 using ChiaWalletConnect.dotnet.Endpoints;
 using ChiaWalletConnect.dotnet.ChiaTypes;
 using ChiaWalletConnect.dotnet.Utils;
+using static System.Net.Mime.MediaTypeNames;
+using WalletConnectSharp.Storage;
+using Org.BouncyCastle.Asn1.Cmp;
 
 namespace ChiaWalletConnect.dotnet
 {
@@ -15,18 +18,19 @@ namespace ChiaWalletConnect.dotnet
         public async Task Initialize(string projectId, Metadata metadata)
         {
             //fix the store.json empty file bug
-            var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            var filePath = Path.Combine(home, ".wc", "store.json");
-            FileInfo fileInfo = new FileInfo(filePath);
+            FileInfo fileInfo = new FileInfo("walletconnect.json");
             if (fileInfo.Exists && fileInfo.Length == 0)
             {
-                File.Delete(filePath);
+                fileInfo.Delete();
             }
+
+            var storage = new FileSystemStorage("walletconnect.json");
 
             SignClientOptions options = new SignClientOptions()
             {
                 ProjectId = projectId,
-                Metadata = metadata
+                Metadata = metadata,
+                Storage = storage
             };
 
             client = await WalletConnectSignClient.Init(options);
@@ -38,7 +42,7 @@ namespace ChiaWalletConnect.dotnet
             {
                 RequiredNamespaces = new RequiredNamespaces() {
                     { "chia",
-                        new RequiredNamespace() {
+                        new ProposedNamespace() {
                             Methods = new[] {
                                 "chia_logIn",//Done v2.
                                 "chia_getWallets",//Done v2.
@@ -52,7 +56,7 @@ namespace ChiaWalletConnect.dotnet
                                 "chia_verifySignature",//Done v2.
                                 "chia_getNextAddress",//Done v2.
                                 "chia_getSyncStatus",//Done v2.
-                                "chia_getAllOffers",//Done v2. Waiting for fix to be done https://github.com/WalletConnect/WalletConnectSharp/pull/104
+                                "chia_getAllOffers",//Done v2.
                                 "chia_getOffersCount",//Done v2.
                                 "chia_createOfferForIds",
                                 "chia_cancelOffer",
